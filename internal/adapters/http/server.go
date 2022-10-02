@@ -19,16 +19,16 @@ func New(logger *zap.SugaredLogger) *Server {
 	return &Server{server: &http.Server{}, logger: logger}
 }
 
-func (s *Server) Start() error {
-	listen, err := net.Listen("tcp", ":3000")
+func (s *Server) Start(port string) error {
+	listen, err := net.Listen("tcp", ":"+port)
 	if err != nil {
-		return fmt.Errorf("failed to listen on port 3000: %v", err)
+		return fmt.Errorf("failed to listen on port %s: %v", err, port)
 	}
 
 	s.server.Handler = s.routes()
 
 	if err := s.server.Serve(listen); !errors.Is(err, http.ErrServerClosed) {
-		return fmt.Errorf("failed to serve http server over port 3000: %v", err)
+		return fmt.Errorf("failed to serve http server over port %s: %v", err, port)
 	}
 	return nil
 }

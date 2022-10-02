@@ -2,6 +2,7 @@ package application
 
 import (
 	"balance/internal/adapters/http"
+	"balance/internal/config"
 	"context"
 	"go.uber.org/zap"
 	"time"
@@ -15,16 +16,22 @@ type App struct {
 func Start(ctx context.Context, app *App) {
 	logger, _ := zap.NewProduction()
 	app.logger = logger
+
+	appConfig, err := config.NewConfig()
+	if err != nil {
+		logger.Sugar().Fatalf("create config failed: %v", err)
+	}
+	app.logger.Sugar().Info(appConfig.HttpPort)
 	app.httpServer = http.New(logger.Sugar())
 
 	go func() {
-		err := app.httpServer.Start()
+		err := app.httpServer.Start(appConfig.HttpPort)
 		if err != nil {
 			logger.Sugar().Fatalf("http server failed: %v", err)
 		}
 	}()
 
-	logger.Sugar().Info("application has started")
+	app.logger.Sugar().Info("application has started")
 }
 
 func Stop(app *App) {
