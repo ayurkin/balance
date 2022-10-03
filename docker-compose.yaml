@@ -1,0 +1,12 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:14
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+    volumes:
+      - ./docker-compose.d/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    command: -c log_min_duration_statement=0 -c log_connections=on -c log_disconnections=on
