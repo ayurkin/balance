@@ -1,6 +1,7 @@
 package http
 
 import (
+	"balance/internal/ports"
 	"context"
 	"errors"
 	"fmt"
@@ -11,12 +12,13 @@ import (
 )
 
 type Server struct {
-	server *http.Server
-	logger *zap.SugaredLogger
+	balance ports.BalancePort
+	server  *http.Server
+	logger  *zap.SugaredLogger
 }
 
-func New(logger *zap.SugaredLogger) *Server {
-	return &Server{server: &http.Server{}, logger: logger}
+func New(balance ports.BalancePort, logger *zap.SugaredLogger) *Server {
+	return &Server{balance: balance, server: &http.Server{}, logger: logger}
 }
 
 func (s *Server) Start(port string) error {
@@ -36,6 +38,7 @@ func (s *Server) Start(port string) error {
 func (s *Server) routes() http.Handler {
 	r := chi.NewMux()
 	r.Get("/health", s.healthHandler)
+	r.Mount("/balance/v1/", s.balanceHandlers())
 	return r
 }
 

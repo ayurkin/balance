@@ -1,23 +1,11 @@
 package errors
 
-import "fmt"
+import (
+	"errors"
+)
 
-type UserError struct {
-	UserId int64
-}
-
-type UnknownUserIdError struct {
-	UserError
-}
-
-func (e UnknownUserIdError) Error() string {
-	return fmt.Sprintf("user_id %d does not exist", e.UserId)
-}
-
-type NotEnoughUserBalance struct {
-	UserError
-}
-
-func (e NotEnoughUserBalance) Error() string {
-	return fmt.Sprintf("user_id %d has not enough balance", e.UserId)
-}
+var (
+	UnknownUserIdError        = errors.New("user_id does not exist")
+	NotEnoughUserBalanceError = errors.New("user_id has not enough balance")
+	DatabaseError             = errors.New("database error")
+)

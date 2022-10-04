@@ -7,9 +7,9 @@ import (
 
 type Transaction struct {
 	Id          int64           `json:"id"`
-	FromId      int64           `json:"from_id"`
-	ToId        int64           `json:"to_id"`
-	Amount      decimal.Decimal `json:"amount"`
-	Time        time.Time       `json:"time"`
-	Description string          `json:"description"`
+	UserIdFrom  int64           `json:"user_id_from"`
+	UserIdTo    int64           `json:"user_id_to"`
+	Value       decimal.Decimal `json:"value"`
+	Time        time.Time
+	Description string `json:"description"`
 }
