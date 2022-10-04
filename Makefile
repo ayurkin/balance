@@ -33,3 +33,6 @@ get_balance:
 	-v \
 	--request GET \
 	--url http://localhost:3000/balance/v1/balance?user_id=1 && echo "\n"
+
+tests/integration/balance:
+	go test -v ./internal/tests/
