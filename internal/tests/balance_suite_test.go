@@ -6,11 +6,10 @@ import (
 	e "balance/internal/domain/errors"
 	"balance/internal/domain/models"
 	"balance/internal/ports"
+	"balance/internal/utils"
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/pressly/goose/v3"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go"
@@ -31,18 +30,6 @@ const (
 	dbPass = "secret"
 )
 
-func applyMigrations(connStr string) error {
-	conn, err := sql.Open("postgres", connStr)
-	if err != nil {
-		return err
-	}
-	err = goose.Up(conn, "../../db/changelog/")
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func TestBalanceRun(t *testing.T) {
 	suite.Run(t, new(ApproveSuite))
 }
@@ -58,7 +45,7 @@ func (suite *ApproveSuite) SetupSuite() {
 
 	dbContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
-			Image:        "postgres:11",
+			Image:        "postgres:14",
 			ExposedPorts: []string{"5432"},
 			Env: map[string]string{
 				"POSTGRES_DB":       dbName,
@@ -100,7 +87,7 @@ func (suite *ApproveSuite) SetupSuite() {
 		cfg.Database,
 		"disable",
 	)
-	err = applyMigrations(connString)
+	err = utils.ApplyMigrations(connString, "../../db/changelog/")
 	suite.T().Log("Migrations finished")
 	suite.Require().NoError(err)
 

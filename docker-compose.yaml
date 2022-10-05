@@ -10,3 +10,18 @@ services:
     volumes:
       - ./docker-compose.d/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     command: -c log_min_duration_statement=0 -c log_connections=on -c log_disconnections=on
+
+  balance:
+    build: .
+    container_name: balance
+    ports:
+      - 3000:3000
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      HTTP_PORT: ${HTTP_PORT}
+    depends_on:
+      - postgres

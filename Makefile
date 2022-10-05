@@ -2,6 +2,9 @@ include .env
 export $(shell sed 's/=.*//' .env)
 
 run:
+	docker compose up
+
+run_local:
 	go run cmd/main.go
 
 add_income:

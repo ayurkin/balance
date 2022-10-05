@@ -5,8 +5,10 @@ import (
 	"balance/internal/adapters/postgres"
 	"balance/internal/config"
 	"balance/internal/domain/balance"
+	"balance/internal/utils"
 	"context"
 	"fmt"
+	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 	"time"
 )
@@ -32,6 +34,11 @@ func Start(ctx context.Context, app *App) {
 	db, err := postgres.New(ctx, pgconn)
 	if err != nil {
 		logger.Sugar().Fatalf("db init failed: %v", err)
+	}
+
+	err = utils.ApplyMigrations(pgconn, "db/changelog/")
+	if err != nil {
+		logger.Sugar().Fatalf("migrations failed: %v", err)
 	}
 
 	balanceS := balance.New(db, logger.Sugar())
